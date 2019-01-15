@@ -129,8 +129,13 @@ static char *find_device_file (int capability)
 	udev_list_entry_foreach(dev_list_entry, devices) {
 		path = udev_list_entry_get_name(dev_list_entry);
 		dev = udev_device_new_from_syspath(udev, path);
-		if (!udev_device_get_devnode(dev))
+		if (!udev_device_get_devnode(dev)) {
+			if (mbm_options_debug ()) {
+				g_debug ("%s has capability %s, but device could not be resolved!",
+					 path, gps_capabilities[capability]);
+			}
 			continue;
+		}
 		device = strdup(udev_device_get_devnode(dev));
 		udev_device_unref (dev);
 		if (mbm_options_debug ()) {
